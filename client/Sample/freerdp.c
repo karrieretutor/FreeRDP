@@ -123,7 +123,7 @@ static DWORD WINAPI tf_client_thread_proc(LPVOID arg)
 	if (!freerdp_connect(instance))
 	{
 		WLog_ERR(TAG, "connection failure");
-		return 0;
+		return 1;
 	}
 
 	while (!freerdp_shall_disconnect(instance))
@@ -163,6 +163,7 @@ int main(int argc, char* argv[])
 {
 	int status;
 	HANDLE thread;
+	DWORD dwExitCode;
 	freerdp* instance;
 	instance = freerdp_new();
 
@@ -204,9 +205,10 @@ int main(int argc, char* argv[])
 	else
 	{
 		WaitForSingleObject(thread, INFINITE);
+		GetExitCodeThread(thread, &dwExitCode);
 	}
 
 	freerdp_context_free(instance);
 	freerdp_free(instance);
-	return 0;
+	return dwExitCode;
 }
